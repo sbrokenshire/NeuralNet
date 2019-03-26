@@ -72,62 +72,11 @@ static void relu_of_a_negative_number_is_zero(void)
 
 static void multi_layer_neural_net_has_weights_and_biases_set_on_initialisation(void)
 {
-	double input_layer_weights[] = {
-		-1, -1, -1,
-	};
+	nn_net neural_net;
 
-	double middle_layer_weights[] = {
-		-1, -1, -1,
-		-1, -1, -1,
-	};
-
-	double output_layer_weights[] = {
-		-1, -1,
-		-1, -1,
-		-1, -1,
-	};
-
-	double input_layer_biases[] = {
-		-1, -1, -1
-	};
-
-	double middle_layer_biases[] = {
-		-1, -1
-	};
-
-	double output_layer_biases[] = {
-		-1, -1, -1
-	};	
-
-	nn_layer input_layer = {
-		.neuron_count = 3,
-		.input_size = 1,
-		.activation_fn = &relu,
-		.weights = input_layer_weights,
-		.biases = input_layer_biases,
-	};
-
-	nn_layer middle_layer = {
-		.neuron_count = 2,
-		.input_size = 3,
-		.activation_fn = &relu,
-		.weights = middle_layer_weights,
-		.biases = middle_layer_biases,
-	};
-
-	nn_layer output_layer = {
-		.neuron_count = 3,
-		.input_size = 2,
-		.activation_fn = &relu,
-		.weights = output_layer_weights,
-		.biases = output_layer_biases,
-	};
-
-	nn_layer layers[] = {
-		input_layer,
-		middle_layer,
-		output_layer
-	};
+	nn_add_layer(&neural_net, 3, &relu)
+	nn_add_layer(&neural_net, 2, &relu)
+	nn_add_layer(&neural_net, 3, &relu)
 
 	unsigned layer_count = 3;
 	nn_net_init(layers,  layer_count);

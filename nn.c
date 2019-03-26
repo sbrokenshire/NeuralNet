@@ -3,8 +3,26 @@
 #include <stdlib.h>
 #include <time.h>
 
-void nn_net_init(nn_layer *layers, unsigned layer_count)
+
+static layer mLayers[20];
+
+void nn_add_layer(unsigned neuron_count, activation_fn activation_fn)
 {
+
+}
+
+void nn_add_layer(nn_net *neural_net, unsigned neuron_count, activation_fn activation_fn)
+{
+	if (neural_net.layer_count = 0)
+	{
+		neural_net->layers[neural_net->layer_count].neuron_count = neuron_count;
+		neural_net->layers[neural_net->layer_count].input_size = 1;
+		neural_net->layers[neural_net->layer_count].weights;
+		neural_net->layers[neural_net->layer_count].biases;
+		neural_net->layers[neural_net->layer_count].activation_fn = activation_fn;
+	}
+
+
 	time_t t;	
 	srand((unsigned) time(&t));
 
