@@ -52,7 +52,7 @@ bool get_input_deltas(nn_layer layer,
 		summed_layer_weights = 0.0;
 		for (unsigned weights_index = 0; weights_index < layer.input_size; weights_index++)
 		{
-			unsigned weight_array_index = neuron_index * layer.neuron_count + weights_index;
+			unsigned weight_array_index = neuron_index * layer.input_size + weights_index;
 			summed_layer_weights += layer.weights[weight_array_index];
 		}
 
