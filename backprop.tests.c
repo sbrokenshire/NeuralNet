@@ -30,11 +30,13 @@ static void bias_change_for_a_single_neuron_can_be_calculated(void)
 
 	double inputs[] = { 10, 20, 30 };
 	const double desired_activation = 30;
+	const double activations = 5;
+	const double summed_cost = 25;
 
 	/* when */
-	const double expected_delta = -31.0; /* calculated by hand */
+	const double expected_delta = 50.0; /* calculated by hand */
 	double bias_delta = 0;
-	bool success = get_bias_deltas(layer, inputs, &desired_activation, relu_deriv, &bias_delta);
+	bool success = get_bias_deltas(layer, inputs, &desired_activation, &activations, relu_deriv, &bias_delta, summed_cost);
 
 	/* then */
 	assert(success);
@@ -58,11 +60,13 @@ static void input_change_for_a_single_neuron_with_a_single_input(void)
 
 	double inputs[] = { 5 };
 	const double desired_activation = 30;
+	const double activations = 5;
+	const double summed_cost = 25;
 
 	/* when */
-	const double expected_delta = -11.4; /* calculated by hand */
+	const double expected_delta = 10; /* calculated by hand */
 	double input_delta = 0;
-	bool success = get_input_deltas(layer, inputs, &desired_activation, relu_deriv, &input_delta);
+	bool success = get_input_deltas(layer, inputs, &desired_activation, &activations, relu_deriv, &input_delta, summed_cost);
 
 	/* then */
 	assert(success);
@@ -86,11 +90,13 @@ static void weight_change_for_a_single_neuron_with_a_single_input(void)
 
 	double inputs[] = { 5 };
 	const double desired_activation = 30;
+	const double activations = 5;
+	const double summed_cost = 25;
 
 	/* when */
-	const double expected_delta = -285; /* calculated by hand */
+	const double expected_delta = 250; /* calculated by hand */
 	double weight_delta = 0;
-	bool success = get_weight_deltas(layer, inputs, &desired_activation, relu_deriv, &weight_delta);
+	bool success = get_weight_deltas(layer, inputs, &desired_activation, &activations, relu_deriv, &weight_delta, summed_cost);
 
 	/* then */
 	assert(success);
@@ -114,11 +120,13 @@ static void input_change_for_a_single_neuron_with_multiple_inputs(void)
 
 	double inputs[] = { 10, 20, 30 };
 	const double desired_activation = 30;
+	const double activations = 5;
+	const double summed_cost = 25;
 
 	/* when */
-	const double expected_delta = -18.6; /* calculated by hand */
+	const double expected_delta = 30; /* calculated by hand */
 	double input_delta = 0.0;
-	bool success = get_input_deltas(layer, inputs, &desired_activation, relu_deriv, &input_delta);
+	bool success = get_input_deltas(layer, inputs, &desired_activation, &activations, relu_deriv, &input_delta, summed_cost);
 
 	/* then */
 	assert(success);
@@ -142,11 +150,13 @@ static void weight_change_for_a_single_neuron_with_multiple_inputs(void)
 
 	double inputs[] = { 10, 20, 30 };
 	const double desired_activation = 30;
+	const double activations = 5;
+	const double summed_cost = 25;
 
 	/* when */
-	const double expected_delta = -1860.0; /* calculated by hand */
+	const double expected_delta = 3000; /* calculated by hand */
 	double weight_delta = 0;
-	bool success = get_weight_deltas(layer, inputs, &desired_activation, relu_deriv, &weight_delta);
+	bool success = get_weight_deltas(layer, inputs, &desired_activation, &activations, relu_deriv, &weight_delta, summed_cost);
 
 	/* then */
 	assert(success);
@@ -174,11 +184,13 @@ static void bias_change_for_a_layer_can_be_calculated(void)
 
 	double inputs[] = { 10, 20, 30 };
 	const double desired_activations[] = { 30, 20, 10 };
+	const double activations[] = { -5, 10, 15 };
+	const double summed_cost = -40;
 
 	/* when */
-	const double expected_deltas[] = { 0, 39.6, 39.6 }; /* calculated by hand */
+	const double expected_deltas[] = { 0, -80, -80 }; /* calculated by hand */
 	double bias_deltas[] = { 0, 0, 0 };
-	bool success = get_bias_deltas(layer, inputs, desired_activations, relu_deriv, bias_deltas);
+	bool success = get_bias_deltas(layer, inputs, desired_activations, activations, relu_deriv, bias_deltas, summed_cost);
 
 	/* then */
 	assert(success);
@@ -209,11 +221,13 @@ static void input_change_for_a_layer_can_be_calculated(void)
 
 	double inputs[] = { 10, 20, 30 };
 	const double desired_activations[] = { 30, 20, 10 };
+	const double activations[] = { -5, 10, 15 };
+	const double summed_cost = -40;
 
 	/* when */
-	const double expected_deltas[] = { 0, 59.4, 95.04 }; /* calculated by hand */
+	const double expected_deltas[] = { 0, -120, -192 }; /* calculated by hand */
 	double input_deltas[] = { 0, 0, 0 };
-	bool success = get_input_deltas(layer, inputs, desired_activations, relu_deriv, input_deltas);
+	bool success = get_input_deltas(layer, inputs, desired_activations, activations, relu_deriv, input_deltas, summed_cost);
 
 	/* then */
 	assert(success);
@@ -241,14 +255,16 @@ static void weight_change_for_a_layer_can_be_calculated(void)
 	};
 	memcpy(layer.weights, weights, sizeof(double) * layer.input_size * layer.neuron_count);
 	memcpy(layer.biases, biases, sizeof(double) * layer.neuron_count);
-	
+
 	double inputs[] = { 10, 20, 30 };
 	const double desired_activations[] = { 30, 20, 10 };
+	const double activations[] = { -5, 10, 15 };
+	const double summed_cost = -40;
 
 	/* when */
-	const double expected_deltas[] = { 0, 2376, 2376 }; /* calculated by hand */
+	const double expected_deltas[] = { 0, -4800, -4800 }; /* calculated by hand */
 	double weight_deltas[] = { 0, 0, 0 };
-	bool success = get_weight_deltas(layer, inputs, desired_activations, relu_deriv, weight_deltas);
+	bool success = get_weight_deltas(layer, inputs, desired_activations, activations, relu_deriv, weight_deltas, summed_cost);
 
 	/* then */
 	assert(success);

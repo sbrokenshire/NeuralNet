@@ -84,6 +84,7 @@ static void relu_of_a_negative_number_is_zero(void)
 static void multi_layer_neural_net_has_weights_and_biases_set_on_initialisation(void)
 {
 	nn_net neural_net;
+
 	nn_net_init(&neural_net);
 
 	nn_add_layer(&neural_net, 3, &relu);
@@ -124,8 +125,170 @@ static void multi_layer_neural_net_has_weights_and_biases_set_on_initialisation(
 		is_set = (neural_net.layers[2].biases[neuron_index] != 0);
 		assert(is_set);
 	}
-	
+
 	printf("multi_layer_neural_net_has_weights_and_biases_set_on_initialisation: passed\n");
+}
+
+static void inputs_passed_to_the_neural_network_output_as_activations(void)
+{
+	/* given */
+	nn_net neural_net;
+	nn_net_init(&neural_net);
+
+	const unsigned output_layer_size = 3;
+
+	nn_add_layer(&neural_net, 3, &relu);
+	nn_add_layer(&neural_net, 2, &relu);
+	nn_add_layer(&neural_net, output_layer_size, &relu);
+
+	double inputs[] = {
+		1.0, 2.0, 3.0
+	};
+
+
+	double expected_activations[] = {
+		0.3
+	};
+
+	nn_training_data training_data[] = {
+		{ .inputs = inputs, .expected_activations = expected_activations, }, 
+		{ .inputs = inputs, .expected_activations = expected_activations, },
+		{ .inputs = inputs, .expected_activations = expected_activations, },
+	};
+	const unsigned training_data_size = 3;
+
+	double activations_out[] = {
+		0.0, 0.0, 0.0
+	};
+
+	/* when */
+	nn_process_inputs(&neural_net, training_data, activations_out);
+
+	/* then */
+	bool is_set = false;
+	for (unsigned input_index = 0; input_index < output_layer_size; input_index++)
+	{
+		is_set = (activations_out[input_index] != 0);
+		assert(is_set);
+	}
+
+	printf("inputs_passed_to_the_neural_network_output_as_activations: passed\n");	
+}
+
+static void neural_network_performs_backpropagation_once_batch_size_has_been_reached(void)
+{
+	/* given */
+	nn_net neural_net = { 
+		.batch_size = 2,
+	};
+	nn_net_init(&neural_net);
+
+	nn_add_layer(&neural_net, 3, &relu);
+	nn_add_layer(&neural_net, 2, &relu);
+	nn_add_layer(&neural_net, 1, &relu);
+
+	double initial_weights[50];
+	double initial_biases[10];
+	unsigned weight_count = 0;
+	unsigned biases_count = 0;
+
+	for (unsigned neuron_index = 0; neuron_index < neural_net.layers[0].neuron_count; ++neuron_index)
+	{
+		initial_weights[weight_count] = neural_net.layers[0].weights[neuron_index];
+		initial_biases[biases_count] = neural_net.layers[0].biases[neuron_index];
+		weight_count++;
+		biases_count++;
+	}
+
+	for (unsigned neuron_index = 0; neuron_index < neural_net.layers[1].neuron_count; ++neuron_index)
+	{
+		for (unsigned input_index = 0; input_index < neural_net.layers[1].input_size; input_index++)
+		{
+			initial_weights[weight_count] = neural_net.layers[1].weights[neuron_index * neural_net.layers[1].input_size + input_index];
+			weight_count++;
+		}
+
+		initial_biases[biases_count] = neural_net.layers[1].biases[neuron_index];
+		biases_count++;
+	}
+
+	for (unsigned neuron_index = 0; neuron_index < neural_net.layers[2].neuron_count; ++neuron_index)
+	{
+		for (unsigned input_index = 0; input_index < neural_net.layers[2].input_size; input_index++)
+		{
+			initial_weights[weight_count] = neural_net.layers[2].weights[input_index * neural_net.layers[2].input_size + input_index];
+			weight_count++;
+		}
+
+		initial_biases[biases_count] = neural_net.layers[2].biases[neuron_index];
+		biases_count++;
+	}
+
+	double inputs[] = {
+		1.0, 2.0, 3.0
+	};
+
+	double expected_activations[] = {
+		0.3
+	};
+
+	nn_training_data training_data[] = {
+		{ .inputs = inputs, .expected_activations = expected_activations, }, 
+		{ .inputs = inputs, .expected_activations = expected_activations, },
+		{ .inputs = inputs, .expected_activations = expected_activations, },
+	};
+	const unsigned training_data_size = 3;
+
+	/* when */
+	nn_train(&neural_net, training_data, training_data_size);
+
+	/* then */
+	double output_weights[50];
+	double output_biases[10];
+	weight_count = 0;
+	biases_count = 0;
+
+	for (unsigned neuron_index = 0; neuron_index < neural_net.layers[0].neuron_count; ++neuron_index)
+	{
+		output_weights[weight_count] = neural_net.layers[0].weights[neuron_index];
+		output_biases[biases_count] = neural_net.layers[0].biases[neuron_index];
+		weight_count++;
+		biases_count++;
+	}
+
+	for (unsigned neuron_index = 0; neuron_index < neural_net.layers[1].neuron_count; ++neuron_index)
+	{
+		for (unsigned input_index = 0; input_index < neural_net.layers[1].input_size; input_index++)
+		{
+			output_weights[weight_count] = neural_net.layers[1].weights[neuron_index * neural_net.layers[1].input_size + input_index];
+			weight_count++;
+		}
+
+		output_biases[biases_count] = neural_net.layers[1].biases[neuron_index];
+		biases_count++;
+	}
+
+	for (unsigned neuron_index = 0; neuron_index < neural_net.layers[2].neuron_count; ++neuron_index)
+	{
+		for (unsigned input_index = 0; input_index < neural_net.layers[2].input_size; input_index++)
+		{
+			output_weights[weight_count] = neural_net.layers[2].weights[input_index * neural_net.layers[2].input_size + input_index];
+			weight_count++;
+		}
+
+		output_biases[biases_count] = neural_net.layers[2].biases[neuron_index];
+		biases_count++;
+	}
+
+	for (unsigned i = 0; i < weight_count; i++)
+	{
+		assert(initial_weights[i] != output_weights[i]);
+	}
+
+	for (unsigned i = 0; i < biases_count; i++)
+	{
+		assert(initial_biases[i] != output_biases[i]);
+	}
 }
 
 int main(void)
@@ -135,6 +298,8 @@ int main(void)
 	relu_of_a_positive_number_is_that_number();
 	relu_of_a_negative_number_is_zero();
 	multi_layer_neural_net_has_weights_and_biases_set_on_initialisation();
+	inputs_passed_to_the_neural_network_output_as_activations();
+	neural_network_performs_backpropagation_once_batch_size_has_been_reached();
 
 	printf("all tests passed\n");
 	return 0;
