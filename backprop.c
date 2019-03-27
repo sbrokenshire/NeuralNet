@@ -1,7 +1,5 @@
 #include "backprop.h"
 
-#define MAX_LAYER_SIZE 256
-
 bool get_bias_deltas(nn_layer layer,
                      const double *inputs,
                      const double *desired_activations,

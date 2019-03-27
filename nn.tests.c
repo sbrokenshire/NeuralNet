@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 
 static void a_single_neurons_activation_is_the_weighted_sum_of_its_inputs_plus_its_bias_fed_through_its_activation_function(void)
 {
@@ -13,10 +14,11 @@ static void a_single_neurons_activation_is_the_weighted_sum_of_its_inputs_plus_i
 	nn_layer layer = {
 		.neuron_count = 1,
 		.input_size = 3,
-		.weights = weights,
-		.biases = biases,
 		.activation_fn = &relu
 	};
+	memcpy(layer.weights, weights, sizeof(double) * layer.input_size * layer.neuron_count);
+	memcpy(layer.biases, biases, sizeof(double) * layer.neuron_count);
+
 	double inputs[] = { 10, 20, 30 };
 
 	/* when */
@@ -26,6 +28,7 @@ static void a_single_neurons_activation_is_the_weighted_sum_of_its_inputs_plus_i
 
 	/* then */
 	assert(activation == expected_activation);
+	printf("a_single_neurons_activation_is_the_weighted_sum_of_its_inputs_plus_its_bias_fed_through_its_activation_function: passed\n");
 }
 
 static void a_layers_activations_are_an_array_of_individual_neuron_activations(void)
@@ -40,10 +43,11 @@ static void a_layers_activations_are_an_array_of_individual_neuron_activations(v
 	nn_layer layer = {
 		.neuron_count = 3,
 		.input_size = 3,
-		.weights = weights,
-		.biases = biases,
 		.activation_fn = &relu
 	};
+	memcpy(layer.weights, weights, sizeof(double) * layer.input_size * layer.neuron_count);
+	memcpy(layer.biases, biases, sizeof(double) * layer.neuron_count);
+
 	double inputs[] = { 10, 20, 30 };
 
 	/* when */
@@ -54,6 +58,9 @@ static void a_layers_activations_are_an_array_of_individual_neuron_activations(v
 	/* then */
 	for (unsigned i = 0; i < layer.neuron_count; ++i)
 		assert(activations[i] == expected_activations[i]);
+
+
+	printf("a_layers_activations_are_an_array_of_individual_neuron_activations: passed\n");
 }
 
 static void relu_of_a_positive_number_is_that_number(void)
@@ -61,6 +68,8 @@ static void relu_of_a_positive_number_is_that_number(void)
 	double inputs[] = { 4, 5.8, 358.7, 0 };
 	for (unsigned i = 0; i < 4; ++i)
 		assert(relu(inputs[i]) == inputs[i]);
+
+	printf("relu_of_a_positive_number_is_that_number: passed\n");
 }
 
 static void relu_of_a_negative_number_is_zero(void)
@@ -68,53 +77,55 @@ static void relu_of_a_negative_number_is_zero(void)
 	double inputs[] = { -4, -5.8, -358.7, -0 };
 	for (unsigned i = 0; i < 4; ++i)
 		assert(relu(inputs[i]) == 0);
+	
+	printf("relu_of_a_negative_number_is_zero: passed\n");
 }
 
 static void multi_layer_neural_net_has_weights_and_biases_set_on_initialisation(void)
 {
 	nn_net neural_net;
+	nn_net_init(&neural_net);
 
-	nn_add_layer(&neural_net, 3, &relu)
-	nn_add_layer(&neural_net, 2, &relu)
-	nn_add_layer(&neural_net, 3, &relu)
-
-	unsigned layer_count = 3;
-	nn_net_init(layers,  layer_count);
+	nn_add_layer(&neural_net, 3, &relu);
+	nn_add_layer(&neural_net, 2, &relu);
+	nn_add_layer(&neural_net, 3, &relu);
 
 	bool is_set = false;
 
-	for (unsigned i = 0; i < input_layer.neuron_count; ++i)
+	for (unsigned neuron_index = 0; neuron_index < neural_net.layers[0].neuron_count; ++neuron_index)
 	{
-		is_set = (input_layer.weights[i] != -1);
+		is_set = (neural_net.layers[0].weights[neuron_index] != 0);
 		assert(is_set);
 
-		is_set = (input_layer.biases[i] != -1);
+		is_set = (neural_net.layers[0].biases[neuron_index] != 0);
 		assert(is_set);
 	}
 
-	for (unsigned i = 0; i < middle_layer.neuron_count * middle_layer.input_size; ++i)
+	for (unsigned neuron_index = 0; neuron_index < neural_net.layers[1].neuron_count; ++neuron_index)
 	{
-		for (unsigned j = 0; j < middle_layer.input_size; j++)
+		for (unsigned input_index = 0; input_index < neural_net.layers[1].input_size; input_index++)
 		{
-			is_set = (middle_layer.weights[i * middle_layer.neuron_count + j] != -1);
+			is_set = (neural_net.layers[1].weights[neuron_index * neural_net.layers[1].input_size + input_index] != 0);
 			assert(is_set);
 		}
 
-		is_set = (middle_layer.biases[i] != -1);
+		is_set = (neural_net.layers[1].biases[neuron_index] != 0);
 		assert(is_set);
 	}
 
-	for (unsigned i = 0; i < output_layer.neuron_count * output_layer.input_size; ++i)
+	for (unsigned neuron_index = 0; neuron_index < neural_net.layers[2].neuron_count; ++neuron_index)
 	{
-		for (unsigned j = 0; j < output_layer.input_size; j++)
+		for (unsigned input_index = 0; input_index < neural_net.layers[2].input_size; input_index++)
 		{
-			is_set = (output_layer.weights[i * output_layer.neuron_count + j] != -1);
+			is_set = (neural_net.layers[2].weights[input_index * neural_net.layers[2].input_size + input_index] != 0);
 			assert(is_set);
 		}
 
-		is_set = (output_layer.biases[i] != -1);
+		is_set = (neural_net.layers[2].biases[neuron_index] != 0);
 		assert(is_set);
 	}
+	
+	printf("multi_layer_neural_net_has_weights_and_biases_set_on_initialisation: passed\n");
 }
 
 int main(void)

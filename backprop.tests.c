@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
 
 #define TOLERANCE 0.001
 #define FLOAT_EQ(x, y) ((x) < (y) ? (y) - (x) < TOLERANCE : (x) - (y) < TOLERANCE)
@@ -22,10 +23,11 @@ static void bias_change_for_a_single_neuron_can_be_calculated(void)
 	nn_layer layer = {
 		.neuron_count = 1,
 		.input_size = 3,
-		.weights = weights,
-		.biases = biases,
 		.activation_fn = &relu
 	};
+	memcpy(layer.weights, weights, sizeof(double) * layer.input_size * layer.neuron_count);
+	memcpy(layer.biases, biases, sizeof(double) * layer.neuron_count);
+
 	double inputs[] = { 10, 20, 30 };
 	const double desired_activation = 30;
 
@@ -37,6 +39,8 @@ static void bias_change_for_a_single_neuron_can_be_calculated(void)
 	/* then */
 	assert(success);
 	assert(FLOAT_EQ(bias_delta, expected_delta));
+	
+	printf("bias_change_for_a_single_neuron_can_be_calculated: passed\n");
 }
 
 static void input_change_for_a_single_neuron_with_a_single_input(void)
@@ -47,10 +51,11 @@ static void input_change_for_a_single_neuron_with_a_single_input(void)
 	nn_layer layer = {
 		.neuron_count = 1,
 		.input_size = 1,
-		.weights = weights,
-		.biases = biases,
 		.activation_fn = &relu,
 	};
+	memcpy(layer.weights, weights, sizeof(double) * layer.input_size * layer.neuron_count);
+	memcpy(layer.biases, biases, sizeof(double) * layer.neuron_count);
+
 	double inputs[] = { 5 };
 	const double desired_activation = 30;
 
@@ -62,6 +67,8 @@ static void input_change_for_a_single_neuron_with_a_single_input(void)
 	/* then */
 	assert(success);
 	assert(FLOAT_EQ(input_delta, expected_delta));
+	
+	printf("input_change_for_a_single_neuron_with_a_single_input: passed\n");
 }
 
 static void weight_change_for_a_single_neuron_with_a_single_input(void)
@@ -72,10 +79,11 @@ static void weight_change_for_a_single_neuron_with_a_single_input(void)
 	nn_layer layer = {
 		.neuron_count = 1,
 		.input_size = 1,
-		.weights = weights,
-		.biases = biases,
 		.activation_fn = &relu,
 	};
+	memcpy(layer.weights, weights, sizeof(double) * layer.input_size * layer.neuron_count);
+	memcpy(layer.biases, biases, sizeof(double) * layer.neuron_count);
+
 	double inputs[] = { 5 };
 	const double desired_activation = 30;
 
@@ -87,6 +95,8 @@ static void weight_change_for_a_single_neuron_with_a_single_input(void)
 	/* then */
 	assert(success);
 	assert(FLOAT_EQ(weight_delta, expected_delta));
+	
+	printf("weight_change_for_a_single_neuron_with_a_single_input: passed\n");
 }
 
 static void input_change_for_a_single_neuron_with_multiple_inputs(void)
@@ -97,10 +107,11 @@ static void input_change_for_a_single_neuron_with_multiple_inputs(void)
 	nn_layer layer = {
 		.neuron_count = 1,
 		.input_size = 3,
-		.weights = weights,
-		.biases = biases,
 		.activation_fn = &relu,
 	};
+	memcpy(layer.weights, weights, sizeof(double) * layer.input_size * layer.neuron_count);
+	memcpy(layer.biases, biases, sizeof(double) * layer.neuron_count);
+
 	double inputs[] = { 10, 20, 30 };
 	const double desired_activation = 30;
 
@@ -112,6 +123,8 @@ static void input_change_for_a_single_neuron_with_multiple_inputs(void)
 	/* then */
 	assert(success);
 	assert(FLOAT_EQ(input_delta, expected_delta));
+	
+	printf("input_change_for_a_single_neuron_with_multiple_inputs: passed\n");
 }
 
 static void weight_change_for_a_single_neuron_with_multiple_inputs(void)
@@ -122,10 +135,11 @@ static void weight_change_for_a_single_neuron_with_multiple_inputs(void)
 	nn_layer layer = {
 		.neuron_count = 1,
 		.input_size = 3,
-		.weights = weights,
-		.biases = biases,
 		.activation_fn = &relu,
 	};
+	memcpy(layer.weights, weights, sizeof(double) * layer.input_size * layer.neuron_count);
+	memcpy(layer.biases, biases, sizeof(double) * layer.neuron_count);
+
 	double inputs[] = { 10, 20, 30 };
 	const double desired_activation = 30;
 
@@ -137,6 +151,8 @@ static void weight_change_for_a_single_neuron_with_multiple_inputs(void)
 	/* then */
 	assert(success);
 	assert(FLOAT_EQ(weight_delta, expected_delta));
+	
+	printf("weight_change_for_a_single_neuron_with_multiple_inputs: passed\n");
 }
 
 static void bias_change_for_a_layer_can_be_calculated(void)
@@ -151,10 +167,11 @@ static void bias_change_for_a_layer_can_be_calculated(void)
 	nn_layer layer = {
 		.neuron_count = 3,
 		.input_size = 3,
-		.weights = weights,
-		.biases = biases,
 		.activation_fn = &relu
 	};
+	memcpy(layer.weights, weights, sizeof(double) * layer.input_size * layer.neuron_count);
+	memcpy(layer.biases, biases, sizeof(double) * layer.neuron_count);
+
 	double inputs[] = { 10, 20, 30 };
 	const double desired_activations[] = { 30, 20, 10 };
 
@@ -169,6 +186,8 @@ static void bias_change_for_a_layer_can_be_calculated(void)
 	{
 		assert(FLOAT_EQ(bias_deltas[index], expected_deltas[index]));
 	}
+	
+	printf("bias_change_for_a_layer_can_be_calculated: passed\n");
 }
 
 static void input_change_for_a_layer_can_be_calculated(void)
@@ -183,10 +202,11 @@ static void input_change_for_a_layer_can_be_calculated(void)
 	nn_layer layer = {
 		.neuron_count = 3,
 		.input_size = 3,
-		.weights = weights,
-		.biases = biases,
 		.activation_fn = &relu
 	};
+	memcpy(layer.weights, weights, sizeof(double) * layer.input_size * layer.neuron_count);
+	memcpy(layer.biases, biases, sizeof(double) * layer.neuron_count);
+
 	double inputs[] = { 10, 20, 30 };
 	const double desired_activations[] = { 30, 20, 10 };
 
@@ -201,6 +221,8 @@ static void input_change_for_a_layer_can_be_calculated(void)
 	{
 		assert(FLOAT_EQ(input_deltas[index], expected_deltas[index]));
 	}
+	
+	printf("input_change_for_a_layer_can_be_calculated: passed\n");
 }
 
 static void weight_change_for_a_layer_can_be_calculated(void)
@@ -215,10 +237,11 @@ static void weight_change_for_a_layer_can_be_calculated(void)
 	nn_layer layer = {
 		.neuron_count = 3,
 		.input_size = 3,
-		.weights = weights,
-		.biases = biases,
 		.activation_fn = &relu
 	};
+	memcpy(layer.weights, weights, sizeof(double) * layer.input_size * layer.neuron_count);
+	memcpy(layer.biases, biases, sizeof(double) * layer.neuron_count);
+	
 	double inputs[] = { 10, 20, 30 };
 	const double desired_activations[] = { 30, 20, 10 };
 
@@ -233,6 +256,8 @@ static void weight_change_for_a_layer_can_be_calculated(void)
 	{
 		assert(FLOAT_EQ(weight_deltas[index], expected_deltas[index]));
 	}
+	
+	printf("weight_change_for_a_layer_can_be_calculated: passed\n");
 }
 
 int main(void)
