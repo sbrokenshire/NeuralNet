@@ -110,15 +110,15 @@ void nn_net_init(nn_net *neural_net)
 
 void nn_train(nn_net *neural_net, nn_training_data *training_data, unsigned training_data_size)
 {
-	unsigned output_count = neural_net->layers[neural_net->layer_count].neuron_count;
+    unsigned output_layer_index = neural_net->layer_count - 1;
+	unsigned output_count = neural_net->layers[output_layer_index].neuron_count;
 	unsigned batch_size = neural_net->batch_size;
-
 
 	double *batch_input;
 	batch_input = (double*) malloc(sizeof(double) * batch_size * output_count);
 	double *activations_out;
-	activations_out = (double*) malloc(sizeof(double) * output_count);
-
+	activations_out = (double*) malloc(sizeof(double) * MAX_LAYER_SIZE);
+    
 	for (unsigned training_data_index = 0; training_data_index < training_data_size; training_data_index++)
 	{
 		/*if(training_data_index % batch_size == 0)

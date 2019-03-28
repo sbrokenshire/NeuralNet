@@ -178,10 +178,10 @@ static void inputs_passed_to_the_neural_network_output_as_activations(void)
 static void neural_network_performs_backpropagation_once_batch_size_has_been_reached(void)
 {
 	/* given */
-	nn_net neural_net = { 
-		.batch_size = 2,
-	};
+	nn_net neural_net;
 	nn_net_init(&neural_net);
+    
+	neural_net.batch_size = 2;
 
 	nn_add_layer(&neural_net, 3, &relu);
 	nn_add_layer(&neural_net, 2, &relu);
@@ -289,6 +289,8 @@ static void neural_network_performs_backpropagation_once_batch_size_has_been_rea
 	{
 		assert(initial_biases[i] != output_biases[i]);
 	}
+    
+    printf("neural_network_performs_backpropagation_once_batch_size_has_been_reached passed\n");
 }
 
 int main(void)
