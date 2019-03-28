@@ -1,4 +1,4 @@
-CFLAGS+=-Wall -Wextra -std=c99 -pedantic
+CFLAGS+=-Wall -Wextra -std=c99 -pedantic -ggdb
 
 nn.o: nn.h
 nn.tests.o: nn.h
